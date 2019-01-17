@@ -12,7 +12,6 @@ image = np.array(im)
 img_resize = im.resize((int(image.shape[1]*0.25), int(image.shape[0]*0.25))) 
 image_resize = np.array(img_resize)
 ary=np.zeros((image_resize.shape[0],image_resize.shape[1]))
-#means=[[0.0,0.0,0.0],[1.0,1.0,1.0],[2.0,2.0,2.0]]
 means=[]
 for i in range(Kcluster):
     tmp=[]
@@ -30,16 +29,12 @@ def cal(mea,inp):
     qq=[]
     qqq=[]
     for i in range(3):
-        #tmp[i]=tmp[i]-mea[i]
-        #qq.append(float(tmp[i]))
         qq.append(float(inp[i])-mea[i])
     for i in range(3):
         tmp1=[]
         for j in range(3):
             tmp1.append(qq[i]*qq[j])
         qqq.append(tmp1)
-    #return tmp
-    #return np.outer(inp.reshape(3,1),inp.reshape(1,3))
     return np.array(qqq)
 
 def kmeans(k,ary,means,ima):
@@ -92,13 +87,10 @@ def normal(mea,co,indata):
 
 def cal_g(indata,mea,co,pi,k):
     total=0
-    #density=pi[k]*normal(mea[k],co[k],indata)
     density=pi[k]*multivariate_normal.pdf(indata, mea[k], co[k])
     for i in range(Kcluster):
-        #total+=pi[i]*normal(mea[i],co[i],indata)
         total+=pi[i]*multivariate_normal.pdf(indata, mea[i], co[i])
     return float(density/total)
-
 
 def recal_mean(image,mean,co,pi):
     new_means=[]
@@ -120,7 +112,6 @@ def recal_mean(image,mean,co,pi):
         tmp_means.append(b/N_k)
         new_means.append(tmp_means)
     return new_means
-#print(recal_mean(image_resize,means,covariance,pi))
 
 def recal_pi(imag,mean,co,pi):
     new_pi=[]
@@ -132,7 +123,7 @@ def recal_pi(imag,mean,co,pi):
                 N_k+=tmp
         new_pi.append(N_k/(image_resize.shape[0]*image_resize.shape[1]))
     return new_pi
-#print(recal_pi(image_resize,means,covariance,pi))
+
 def recal_co(imag,new_mean,co,pi,old_mean):
     new_co=np.zeros((Kcluster,3,3))
     for i in range(Kcluster):
@@ -152,7 +143,6 @@ def cal_likelihood(mean,co,pi):
         for j in range(image_resize.shape[1]):
             tmp=0.0
             for z in range(Kcluster):
-                #tmp+=pi[z]*normal(mean[z],co[z],image_resize[i][j])
                 tmp+=pi[z]*multivariate_normal.pdf(image_resize[i][j], mean[z], co[z])
             out+=np.log(tmp)
     return float(out)
